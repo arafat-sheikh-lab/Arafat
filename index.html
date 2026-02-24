@@ -55,6 +55,7 @@
             color: var(--text);
             line-height: 1.6;
             transition: background-color 0.3s ease, color 0.3s ease;
+            animation: pageTransition 0.8s ease;
         }
         .container {
             max-width: 1200px;
@@ -68,6 +69,36 @@
         section:last-child {
             border-bottom: none;
         }
+
+        /* ===== PAGE TRANSITION ===== */
+        @keyframes pageTransition {
+            0% {
+                opacity: 0;
+                transform: scale(0.98);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* ===== SCROLL PROGRESS BAR ===== */
+        .progress-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: transparent;
+            z-index: 1001;
+        }
+        .progress-bar-scroll {
+            height: 4px;
+            background: var(--primary);
+            width: 0%;
+            transition: width 0.2s ease;
+        }
+
         /* ===== HEADER / NAV ===== */
         header {
             background-color: var(--surface);
@@ -121,6 +152,7 @@
         .theme-toggle:hover {
             transform: scale(1.1);
         }
+
         /* ===== HERO SECTION ===== */
         .hero {
             display: flex;
@@ -130,6 +162,25 @@
         }
         .hero-content {
             flex: 1 1 350px;
+            animation: fadeInUp 1s ease forwards;
+        }
+        .hero-image {
+            flex: 1 1 300px;
+            display: flex;
+            justify-content: center;
+            animation: fadeInUp 1s ease 0.3s forwards;
+            opacity: 0;
+            animation-fill-mode: forwards;
+        }
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
         .hero-content .badge {
             background: var(--primary-light);
@@ -153,16 +204,23 @@
             font-weight: 400;
             color: var(--primary);
             margin-bottom: 20px;
+            display: inline-block;
+            overflow: hidden;
+            white-space: nowrap;
+            border-right: 3px solid var(--primary);
+            animation: typing 3s steps(40, end), blink 0.75s step-end infinite;
+        }
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+        @keyframes blink {
+            50% { border-color: transparent }
         }
         .hero-content p {
             color: var(--text-light);
             max-width: 500px;
             margin-bottom: 28px;
-        }
-        .hero-image {
-            flex: 1 1 300px;
-            display: flex;
-            justify-content: center;
         }
         .photo-frame {
             width: 300px;
@@ -173,8 +231,12 @@
             align-items: center;
             justify-content: center;
             box-shadow: var(--card-shadow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
-        /* formal suit & red tie simulated via styling (passport style) */
+        .photo-frame:hover {
+            transform: scale(1.02) translateY(-5px);
+            box-shadow: 0 20px 30px rgba(0,0,0,0.2);
+        }
         .photo-frame img {
             width: 290px;
             height: 290px;
@@ -183,7 +245,6 @@
             border: 4px solid white;
             background: #f0f0f0;
         }
-        /* button */
         .btn {
             display: inline-block;
             background-color: var(--primary);
@@ -192,15 +253,21 @@
             border-radius: 40px;
             font-weight: 600;
             text-decoration: none;
-            transition: 0.2s;
             border: none;
             cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
         }
         .btn:hover {
-            background-color: var(--primary-light);
             transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 74, 124, 0.3);
         }
-        /* ===== ABOUT ===== */
+        .btn:active {
+            transform: translateY(-1px);
+        }
+
+        /* ===== SECTION TITLES ===== */
         .section-title {
             font-size: 2.2rem;
             font-weight: 700;
@@ -217,12 +284,15 @@
             background: var(--primary);
             border-radius: 4px;
         }
+
+        /* ===== ABOUT ===== */
         .about-text {
             font-size: 1.1rem;
             color: var(--text-light);
             max-width: 800px;
         }
-        /* ===== SKILLS with progress bars ===== */
+
+        /* ===== SKILLS ===== */
         .skills-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -231,6 +301,10 @@
         }
         .skill-item {
             width: 100%;
+            transition: transform 0.2s ease;
+        }
+        .skill-item:hover {
+            transform: translateX(5px);
         }
         .skill-info {
             display: flex;
@@ -249,10 +323,27 @@
             height: 12px;
             background: var(--progress-fill);
             border-radius: 20px;
-            width: 0%; /* will be set by js */
+            width: 0%;
             transition: width 1s ease;
+            position: relative;
+            overflow: hidden;
         }
-        /* ===== EXPERIENCE timeline ===== */
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            animation: shimmer 2s infinite;
+        }
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* ===== EXPERIENCE ===== */
         .timeline {
             display: flex;
             flex-direction: column;
@@ -264,6 +355,11 @@
             border-radius: 20px;
             box-shadow: var(--card-shadow);
             border-left: 6px solid var(--primary);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .timeline-item:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 30px -10px rgba(0,0,0,0.2);
         }
         .timeline-year {
             font-weight: 700;
@@ -279,7 +375,8 @@
             color: var(--text-light);
             font-weight: 400;
         }
-        /* ===== EDUCATION & TRAINING cards ===== */
+
+        /* ===== EDUCATION ===== */
         .edu-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -290,6 +387,11 @@
             padding: 24px;
             border-radius: 24px;
             box-shadow: var(--card-shadow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .edu-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 30px -10px rgba(0,0,0,0.2);
         }
         .edu-card h3 {
             font-size: 1.3rem;
@@ -298,7 +400,8 @@
         .edu-card p {
             color: var(--text-light);
         }
-        /* ===== CONTACT & FORM ===== */
+
+        /* ===== CONTACT ===== */
         .contact-row {
             display: flex;
             flex-wrap: wrap;
@@ -327,11 +430,23 @@
         .social-links a {
             color: var(--text);
             font-size: 1.8rem;
-            transition: color 0.2s;
+            transition: all 0.3s ease;
+            display: inline-block;
         }
         .social-links a:hover {
             color: var(--primary);
+            transform: translateY(-5px) rotate(8deg);
         }
+        .social-links a:nth-child(1) { animation: float 3s ease-in-out infinite; }
+        .social-links a:nth-child(2) { animation: float 3s ease-in-out 0.2s infinite; }
+        .social-links a:nth-child(3) { animation: float 3s ease-in-out 0.4s infinite; }
+        .social-links a:nth-child(4) { animation: float 3s ease-in-out 0.6s infinite; }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
         .contact-form {
             flex: 2 1 350px;
             display: flex;
@@ -346,11 +461,18 @@
             background: var(--surface);
             color: var(--text);
             font-size: 1rem;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .form-group input:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(10, 77, 124, 0.1);
         }
         .form-group textarea {
             border-radius: 24px;
             resize: vertical;
         }
+
         /* ===== FOOTER ===== */
         footer {
             background: var(--footer-bg);
@@ -358,25 +480,48 @@
             text-align: center;
             color: var(--text-light);
         }
-        /* ===== ANIMATIONS (fade-in) ===== */
+
+        /* ===== FADE-IN ANIMATIONS ===== */
         .fade-in {
             opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.8s ease, transform 0.8s ease;
+            transform: translateY(30px);
+            transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), 
+                        transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .fade-in.visible {
             opacity: 1;
             transform: translateY(0);
         }
-        /* responsive */
+
+        /* Stagger animations for skills grid */
+        .skills-grid .fade-in:nth-child(1) { transition-delay: 0.1s; }
+        .skills-grid .fade-in:nth-child(2) { transition-delay: 0.2s; }
+        .skills-grid .fade-in:nth-child(3) { transition-delay: 0.3s; }
+        .skills-grid .fade-in:nth-child(4) { transition-delay: 0.4s; }
+        .skills-grid .fade-in:nth-child(5) { transition-delay: 0.5s; }
+        .skills-grid .fade-in:nth-child(6) { transition-delay: 0.6s; }
+        .skills-grid .fade-in:nth-child(7) { transition-delay: 0.7s; }
+        .skills-grid .fade-in:nth-child(8) { transition-delay: 0.8s; }
+
+        /* ===== RESPONSIVE ===== */
         @media (max-width: 700px) {
             .hero-content h1 { font-size: 2.5rem; }
+            .hero-content h2 { 
+                white-space: normal;
+                border-right: none;
+                animation: none;
+            }
             .navbar { flex-direction: column; gap: 12px; }
             .nav-menu { flex-wrap: wrap; justify-content: center; gap: 16px; }
         }
     </style>
 </head>
 <body>
+    <!-- Scroll Progress Bar -->
+    <div class="progress-container">
+        <div class="progress-bar-scroll" id="scrollBar"></div>
+    </div>
+
     <header>
         <div class="container navbar">
             <div class="logo">Arafat.</div>
@@ -398,18 +543,19 @@
         <!-- HERO / HOME -->
         <section id="home">
             <div class="container hero">
-                <div class="hero-content fade-in">
+                <div class="hero-content">
                     <span class="badge">🇧🇩 Bangladesh</span>
                     <h1>Md. Arafat</h1>
                     <h2>Computer Trainer & ICT Student</h2>
                     <p>Motivated & hardworking, skilled in MS Office, computer operations, and passionate about digital freelancing.</p>
                     <a href="#contact" class="btn">Hire me</a>
                 </div>
-                <div class="hero-image fade-in">
+                <div class="hero-image">
                     <div class="photo-frame">
-                        <!-- Formal suit & red tie: passport style photo placeholder (professional) -->
-                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 400 400'%3E%3Crect width='400' height='400' fill='%232b3a4a'/%3E%3Ccircle cx='200' cy='160' r='60' fill='%23f9dbbd'/%3E%3Cpath d='M130 250 Q200 320, 270 250' stroke='%23ffffff' stroke-width='10' fill='%231e2e41'/%3E%3Crect x='170' y='230' width='60' height='80' fill='%2303204b'/%3E%3Cpolygon points='190,220 210,220 200,240' fill='%23c0392b'/%3E%3Ctext x='120' y='350' font-family='Arial' font-size='22' fill='%23ffffff'%3EFormal Suit%3C/text%3E%3C/svg%3E"
-                             alt="Md. Arafat - professional portrait, formal suit and red tie">
+                        <!-- REPLACE THIS IMAGE SOURCE WITH YOUR PHOTO -->
+                        <!-- Option 1: Local file - use 'images/arafat-profile.jpg' -->
+                        <!-- Option 2: Online URL - use your image URL -->
+                        <img src="images/arafat-profile.jpg" alt="Md. Arafat">
                     </div>
                 </div>
             </div>
@@ -426,17 +572,15 @@
             </div>
         </section>
 
-        <!-- SKILLS with progress bars -->
+        <!-- SKILLS -->
         <section id="skills">
             <div class="container">
                 <h2 class="section-title fade-in">Skills</h2>
-                <div class="skills-grid" id="skillsContainer">
-                    <!-- data will be injected via JS but we fill manually with progress values -->
-                </div>
+                <div class="skills-grid" id="skillsContainer"></div>
             </div>
         </section>
 
-        <!-- EXPERIENCE timeline -->
+        <!-- EXPERIENCE -->
         <section id="experience">
             <div class="container">
                 <h2 class="section-title fade-in">Experience</h2>
@@ -487,7 +631,7 @@
             </div>
         </section>
 
-        <!-- CONTACT section -->
+        <!-- CONTACT -->
         <section id="contact">
             <div class="container">
                 <h2 class="section-title fade-in">Contact</h2>
@@ -549,7 +693,15 @@
                 }
             });
 
-            // ===== POPULATE SKILLS (with progress bars) =====
+            // ===== SCROLL PROGRESS BAR =====
+            window.onscroll = function() {
+                let winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+                let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                let scrolled = (winScroll / height) * 100;
+                document.getElementById('scrollBar').style.width = scrolled + '%';
+            };
+
+            // ===== POPULATE SKILLS =====
             const skillsData = [
                 { name: 'Microsoft Word', level: 90 },
                 { name: 'Microsoft Excel', level: 85 },
@@ -562,10 +714,10 @@
             ];
             const skillsContainer = document.getElementById('skillsContainer');
             if (skillsContainer) {
-                skillsContainer.innerHTML = ''; // clear
+                skillsContainer.innerHTML = '';
                 skillsData.forEach(skill => {
                     const skillDiv = document.createElement('div');
-                    skillDiv.className = 'skill-item fade-in'; // fade class
+                    skillDiv.className = 'skill-item fade-in';
                     skillDiv.innerHTML = `
                         <div class="skill-info">
                             <span>${skill.name}</span>
@@ -579,14 +731,13 @@
                 });
             }
 
-            // ===== FADE-IN OBSERVER (animations) =====
+            // ===== FADE-IN OBSERVER =====
             const faders = document.querySelectorAll('.fade-in');
             const appearOptions = { threshold: 0.2, rootMargin: '0px 0px -30px 0px' };
             const appearOnScroll = new IntersectionObserver((entries, observer) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         entry.target.classList.add('visible');
-                        // if it contains progress-fill, animate width
                         const progressFill = entry.target.querySelector('.progress-fill');
                         if (progressFill && progressFill.dataset.level) {
                             progressFill.style.width = progressFill.dataset.level + '%';
@@ -600,10 +751,9 @@
                 appearOnScroll.observe(fader);
             });
 
-            // also target any .progress-fill not inside .fade-in parent? we already wrap skill items, but just in case:
+            // Observe progress fills not in fade-in parents
             document.querySelectorAll('.progress-fill').forEach(el => {
                 if (!el.closest('.fade-in')) {
-                    // if parent not fade, we want them to fill when visible? we create a small observer for them separately
                     const fillObserver = new IntersectionObserver((entries) => {
                         entries.forEach(e => {
                             if (e.isIntersecting) {
@@ -618,7 +768,7 @@
                 }
             });
 
-            // Contact form prevent default (simple)
+            // ===== CONTACT FORM =====
             const contactForm = document.getElementById('contactForm');
             if (contactForm) {
                 contactForm.addEventListener('submit', (e) => {
@@ -628,7 +778,7 @@
                 });
             }
 
-            // make sure visible class on hero (already visible?) if not triggered
+            // ===== CHECK VISIBLE ON LOAD =====
             window.addEventListener('load', () => {
                 document.querySelectorAll('.fade-in').forEach(el => {
                     const rect = el.getBoundingClientRect();
@@ -639,9 +789,10 @@
                     }
                 });
             });
+
+            // ===== PHOTO REPLACEMENT GUIDE =====
+            console.log('To add your photo: Find the .photo-frame img tag and replace src with your image path');
         })();
     </script>
-    <!-- ensure progress fill if visible on load -->
-    <noscript></noscript>
 </body>
 </html>
